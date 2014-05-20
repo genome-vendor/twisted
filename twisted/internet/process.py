@@ -458,11 +458,12 @@ class _BaseProcess(BaseProcess, object):
         """
         The exec() which is done in the forked child.
         """
-        if path:
-            os.chdir(path)
         # set the UID before I actually exec the process
         if settingUID:
             switchUID(uid, gid)
+        # chdir after dropping permissions to avoid NFS root squashing
+        if path:
+            os.chdir(path)
         os.execvpe(executable, args, environment)
 
     def __repr__(self):
